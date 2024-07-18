@@ -18,14 +18,30 @@ const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState({});
   const [token, setToken] = useState("");
 
+  useEffect(() => {
+    // Check localStorage for an existing token and user data
+    const storedToken = localStorage.getItem("authToken");
+    const storedUser = localStorage.getItem("currentUser");
+
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setCurrentUser(JSON.parse(storedUser));
+      setLoggedIn(true);
+    }
+  }, []);
+
   const loginHandler = (userObj, callback) => {
     login(
       userObj,
-      callback,
-      setAuthToken,
-      setCurrentUser,
-      setLoggedIn,
-      setToken
+      (userData, authToken) => {
+        setCurrentUser(userData);
+        setToken(authToken);
+        setLoggedIn(true);
+        localStorage.setItem("authToken", authToken);
+        localStorage.setItem("currentUser", JSON.stringify(userData));
+        callback();
+      },
+      setAuthToken
     );
   };
 
@@ -33,30 +49,92 @@ const AuthContextProvider = ({ children }) => {
     setLoggedIn(false);
     setToken("");
     setCurrentUser({});
-    localStorage.removeItem("key");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("currentUser");
   };
+
 
   const signupHandler = (userObj, callback) => {
     signup(
       userObj,
-      callback,
-      setAuthToken,
-      setCurrentUser,
-      setLoggedIn,
-      setToken
+      (userData, authToken) => {
+        setCurrentUser(userData);
+        setToken(authToken);
+        setLoggedIn(true);
+        localStorage.setItem("authToken", authToken);
+        localStorage.setItem("currentUser", JSON.stringify(userData));
+        callback();
+      },
+      setAuthToken
     );
   };
 
+
+const TodoContextProvider = ({ children }) => {
+  const [todos, setTodos] = useState([]);
+  const [todoString, setTodoString] = useState(new Date().toDateString());
+
+  useEffect(() => {
+    const storedTodos = localStorage.getItem("todos");
+    if (storedTodos) {
+      setTodos(JSON.parse(storedTodos));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
+  const displayTodos = todos.filter(
+    (todo) => todo.date.toDateString() === todoString
+  );
+
+  const createTodoHandler = (newTodo) => {
+    setTodos((prevTodos) => [...prevTodos, newTodo]);
+  };
+
+  const updateTodoHandler = (updatedTodos) => {
+    setTodos(updatedTodos);
+  };
+
+  const updateTodoStringHandler = (newDateString) => {
+    setTodoString(newDateString);
+  };
+
+  const deleteTodoHandler = (todoId) => {
+    const updatedTodos = todos.filter((todo) => todo.id !== todoId);
+    setTodos(updatedTodos);
+  };
+
+  const toggleCompleteHandler = (todoId) => {
+    const updatedTodos = todos.map((todo) =>
+      todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+    );
+    setTodos(updatedTodos);
+  };
+
+  const clearCompletedTodosHandler = () => {
+    const updatedTodos = todos.filter((todo) => !todo.completed);
+    setTodos(updatedTodos);
+  };
+
   return (
-    <AuthContext.Provider
+    <TodoContext.Provider
       value={{
-        loggedIn: loggedIn,
-        loggedUser: currentUser,
-        token: token,
-        onLogin: loginHandler,
-        onSignup: signupHandler,
-        onLogout: logoutHandler,
+        todos,
+        activeDay: todoString,
+        displayTodos,
+        onUpdateString: updateTodoStringHandler,
+        onCreate: createTodoHandler,
+        onUpdate: updateTodoHandler,
+        onDelete: deleteTodoHandler,
+        onToggleComplete: toggleCompleteHandler,
+        onClearCompleted: clearCompletedTodosHandler,
       }}
+    >
+      {children}
+    </TodoContext.Provider>
+  );
     >
       {children}
     </AuthContext.Provider>
@@ -64,10 +142,3 @@ const AuthContextProvider = ({ children }) => {
 };
 
 export default AuthContextProvider;
-
-/**
- * Two things that I need to implement
- * 1. Reload and preserve the login state
- * 2. Create date wise task
- * 3. Ensure all routes are working perfectly fine.
- */
