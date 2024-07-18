@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 
 export const TodoContext = React.createContext({
   todos: [],
@@ -9,45 +8,70 @@ export const TodoContext = React.createContext({
   onUpdateString: () => {},
   onCreate: () => {},
   onUpdate: () => {},
+  onDelete: () => {},
+  onToggleComplete: () => {},
 });
 
 const TodoContextProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
-
   const [todoString, setTodoString] = useState(new Date().toDateString());
 
-  // Need to filter the todos to display the todos based on the date change
-  // this will be done by attaching a change event using the context when date button is clicked
-  // const displayTodos = todos.filter(
-  //   (todo) => todo.date.toDateString() === todoString
-  // );
-  // we can also load all the todos here using the useEffect
+  useEffect(() => {
+    const storedTodos = localStorage.getItem("todos");
+    if (storedTodos) {
+      setTodos(JSON.parse(storedTodos));
+    }
+  }, []);
 
-  const displayTodos = todos;
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
+  const displayTodos = todos.filter(
+    (todo) => todo.date.toDateString() === todoString
+  );
 
   const createTodoHandler = (newTodo) => {
-    setTodos((prev) => {
-      return [...prev, newTodo];
-    });
+    setTodos((prevTodos) => [...prevTodos, newTodo]);
   };
 
-  const updateTodoHandler = (data) => {
-    setTodos(data);
+  const updateTodoHandler = (updatedTodos) => {
+    setTodos(updatedTodos);
   };
 
-  const updateTodoStringHandler = (string) => {
-    setTodoString(string);
+  const updateTodoStringHandler = (newDateString) => {
+    setTodoString(newDateString);
+  };
+
+  const deleteTodoHandler = (todoId) => {
+    const updatedTodos = todos.filter((todo) => todo.id !== todoId);
+    setTodos(updatedTodos);
+  };
+
+  const toggleCompleteHandler = (todoId) => {
+    const updatedTodos = todos.map((todo) =>
+      todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+    );
+    setTodos(updatedTodos);
+  };
+
+  const clearCompletedTodosHandler = () => {
+    const updatedTodos = todos.filter((todo) => !todo.completed);
+    setTodos(updatedTodos);
   };
 
   return (
     <TodoContext.Provider
       value={{
-        todos: todos,
+        todos,
         activeDay: todoString,
-        displayTodos: displayTodos,
+        displayTodos,
         onUpdateString: updateTodoStringHandler,
         onCreate: createTodoHandler,
         onUpdate: updateTodoHandler,
+        onDelete: deleteTodoHandler,
+        onToggleComplete: toggleCompleteHandler,
+        onClearCompleted: clearCompletedTodosHandler,
       }}
     >
       {children}
