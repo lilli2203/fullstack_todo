@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { getNext7Dates, getPrev7Dates } from "../util/date";
 import { TodoContext } from "../context/TodoContext";
 
@@ -34,6 +34,8 @@ const HomeHeader = () => {
     setOriginalDates(next7Days);
   };
 
+  // Placeholder for additional functionality or components
+
   return (
     <div className="px-12 py-4">
       <div className="flex items-center justify-between mb-10 ">
@@ -50,7 +52,7 @@ const HomeHeader = () => {
               key={d}
               value={d.toDateString()}
               className={` cursor-pointer px-4 py-2 rounded-md border-2 ${
-                activeDay == d.toDateString()
+                activeDay === d.toDateString()
                   ? "bg-indigo-50 border-indigo-700 text-indigo-700"
                   : "text-slate-500 bg-white"
               }`}
@@ -70,8 +72,7 @@ const HomeHeader = () => {
         {displayTodos.length} TASKS
       </p>
       <p className="text-slate-400 text-sm font-bold">
-        Showing your tasks for
-        {" " + activeDay}
+        Showing your tasks for {" " + activeDay}
       </p>
     </div>
   );
