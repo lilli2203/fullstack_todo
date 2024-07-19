@@ -5,9 +5,114 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      header {
+        background-color: #282c34;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+      }
+      nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+      }
+      nav ul li {
+        margin: 0 15px;
+      }
+      nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      footer {
+        background-color: #282c34;
+        color: white;
+        text-align: center;
+        padding: 10px 20px;
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+      }
+      .container {
+        padding: 20px;
+      }
+      .section {
+        margin-bottom: 20px;
+      }
+      .section h2 {
+        border-bottom: 2px solid #282c34;
+        padding-bottom: 5px;
+      }
+      .section p {
+        line-height: 1.6;
+      }
+    </style>
   </head>
   <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
     <div id="root"></div>
+
+    <div class="container">
+      <section id="home" class="section">
+        <h2>Welcome to Vite + React</h2>
+        <p>
+          This is a sample page demonstrating how you can expand your HTML file
+          with additional elements and styles. This page includes a navigation bar,
+          multiple content sections, and a footer.
+        </p>
+      </section>
+
+      <section id="about" class="section">
+        <h2>About Us</h2>
+        <p>
+          We are a team of developers who love creating web applications using the
+          latest technologies. Our goal is to build user-friendly and efficient
+          solutions to meet your needs.
+        </p>
+      </section>
+
+      <section id="services" class="section">
+        <h2>Our Services</h2>
+        <ul>
+          <li>Web Development</li>
+          <li>Mobile App Development</li>
+          <li>UI/UX Design</li>
+          <li>SEO Optimization</li>
+        </ul>
+      </section>
+
+      <section id="contact" class="section">
+        <h2>Contact Us</h2>
+        <p>
+          If you have any questions or would like to get in touch, please
+          contact us via email at <a href="mailto:info@example.com">info@example.com</a>.
+        </p>
+      </section>
+    </div>
+
+    <footer>
+      <p>&copy; 2024 Vite + React. All rights reserved.</p>
+    </footer>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
